@@ -21,7 +21,7 @@ const loginUser = async (req,res)=>{
             res.json({success:true,token})
         }
         else{
-            res.json({sucess:false,message:"Invalid credentials"})
+            res.json({success:false,message:"Invalid credentials"})
         }
     } catch (error) {
         console.log(error)
@@ -55,7 +55,7 @@ const registerUser = async (req,res)=>{
         })
         const user = await newUser.save() 
         const token = createToken(user._id)
-        res.json({sucess:true,token})
+        res.json({success:true,token})
     } catch(error){
         console.log(error)
         res.json({success:false,message:error.message})
