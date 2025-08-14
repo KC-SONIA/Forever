@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { ShopContext } from "../context/shopContext";
 const Login = () => {
@@ -15,6 +15,7 @@ const Login = () => {
     try{
       if(currentstate ==='Sign Up'){
         const response=await axios.post(backendUrl +'/api/user/register',{name,email,password})
+        
         if(response.data.success){
           setToken(response.data.token)
           localStorage.setItem('token',response.data.token)
@@ -25,7 +26,7 @@ const Login = () => {
       }
       else{
         const response=await axios.post(backendUrl+'/api/user/login',{email,password})
-        console.log(response.data);
+  
         if(response.data.success){
           setToken(response.data.token)
           localStorage.setItem('token',response.data.token)
@@ -36,21 +37,20 @@ const Login = () => {
       }
     }
     catch (error) {
-  console.log(error);
-
-  // Check if it's an API error with a proper message
-  if (error.response && error.response.data && error.response.data.message) {
-    toast.error(error.response.data.message); // e.g., "User already exists"
-  } else {
-    toast.error("Something went wrong. Please try again.");
+      console.log(error);
+      // Check if it's an API error with a proper message
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message); // e.g., "User already exists"
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    }
   }
-}
-
-    // catch(error){
-    //   console.log(error);
-    //   toast.error(error.message)
-    // }
-  }
+  useEffect(()=>{
+    if(token){
+      navigate('/')
+    }
+  },[token])
   return (
     <form onSubmit={onSubmitHandler}className='flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800'>
       <div className='inline-flex items-center gap-2 mb-2 mt-10'>
