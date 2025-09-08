@@ -8,6 +8,7 @@ const ShopContextProvider=(props)=>{
     const currency='₹';
     const delivery_fee=10;
     const backendUrl =import.meta.env.VITE_BACKEND_URL
+    const [totalAmount, setTotalAmount] = useState(0);
     const [search,setSearch]=useState('');
     const [showSearch,setShowSearch]=useState(false);
     const [cartItems,setCartItems]=useState({});
@@ -65,29 +66,49 @@ const ShopContextProvider=(props)=>{
         }
         return totalCount;
     }
-    const getCartAmount=()=>{
-        let totalAmount=0;
-        for(const items in cartItems){
-            
-           let itemInfo = product.find((p) => String(p._id) === String(items));
+    // const getCartAmount=()=>{
+    //     let totalAmount=0;
+    //     for(const items in cartItems){
+    //         console.log(product)
+    //        let itemInfo = product.find((product)=>product._id===items);
+    //        console.log(itemInfo)
+    //        console.log(itemInfo.price)
+    //         for(const item in cartItems[items]){
+    //             try{
+    //                 if(cartItems[items][item]>0){
+    //                     totalAmount+=itemInfo.price*cartItems[items][item];
+    //                 }
+    //             }
+    //             catch(error){
+    //                 console.log(error)
+    //                 toast.error(error.message)
 
-            console.log(itemInfo);        
-            console.log(itemInfo?._id);
-            for(const item in cartItems[items]){
-                try{
-                    if(cartItems[items][item]>0){
-                        totalAmount+=itemInfo.price*cartItems[items][item];
-                    }
-                }
-                catch(error){
-                    console.log(error)
-                    toast.error(error.message)
+    //             }
+    //         }
+    //     }
+    //     return totalAmount;
+    // }
+    useEffect(() => {
+  const calculateTotal = () => {
+    let total = 0;
 
-                }
-            }
+    for (const items in cartItems) {
+      const itemInfo = product.find(p => p._id === items);
+
+      if (!itemInfo) continue; // skip if product not found yet
+
+      for (const size in cartItems[items]) {
+        if (cartItems[items][size] > 0) {
+          total += itemInfo.price * cartItems[items][size];
         }
-        return totalAmount;
+      }
     }
+
+    setTotalAmount(total);
+  };
+
+  calculateTotal();
+}, [cartItems, product]);
 
     const updateQuantity=async(itemId,size,quantity)=>{
         let cartData=structuredClone(cartItems);
@@ -118,7 +139,7 @@ const ShopContextProvider=(props)=>{
     }
     const getProductsData =async()=>{
         try{
-            const response = await axios.get(backendUrl +'/api/product/list')
+            const response =  await axios.get(backendUrl +'/api/product/list')
             if(response.data.success){
               setProduct(response.data.products);
             }
@@ -131,10 +152,10 @@ const ShopContextProvider=(props)=>{
             toast.error(error.message)
         }
     }
-    useEffect(()=>{
-        getProductsData();
-       
-    },[])
+    useEffect(() => {
+      getProductsData()
+    }, []);
+
     useEffect(()=>{
         if(!token && localStorage.getItem('token')){
             setToken(localStorage.getItem('token'))
@@ -145,7 +166,7 @@ const ShopContextProvider=(props)=>{
         product,currency,delivery_fee,
         search,setSearch,showSearch,setShowSearch,
         cartItems,addToCart,setCartItems,
-        getCartCount,updateQuantity,getCartAmount,navigate,backendUrl,
+        getCartCount,updateQuantity,totalAmount,navigate,backendUrl,
         setToken,token
     }
     return(

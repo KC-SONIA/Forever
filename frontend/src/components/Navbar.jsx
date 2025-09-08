@@ -7,7 +7,6 @@ const Navbar = () => {
   const[visible ,setVisible]=useState(false); 
   const {setShowSearch,getCartCount,navigate,token,setToken,setCartItems}=useContext(ShopContext);
   const logout = () =>{
-    console.log("loggin out")
     localStorage.removeItem('token')
     setToken('')
     setCartItems({})
