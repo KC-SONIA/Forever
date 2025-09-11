@@ -71,8 +71,6 @@ const ShopContextProvider=(props)=>{
     //     for(const items in cartItems){
     //         console.log(product)
     //        let itemInfo = product.find((product)=>product._id===items);
-    //        console.log(itemInfo)
-    //        console.log(itemInfo.price)
     //         for(const item in cartItems[items]){
     //             try{
     //                 if(cartItems[items][item]>0){
@@ -91,7 +89,6 @@ const ShopContextProvider=(props)=>{
     useEffect(() => {
   const calculateTotal = () => {
     let total = 0;
-
     for (const items in cartItems) {
       const itemInfo = product.find(p => p._id === items);
 
@@ -103,18 +100,34 @@ const ShopContextProvider=(props)=>{
         }
       }
     }
-
     setTotalAmount(total);
   };
-
   calculateTotal();
 }, [cartItems, product]);
 
     const updateQuantity=async(itemId,size,quantity)=>{
-        let cartData=structuredClone(cartItems);
-        cartData[itemId][size]=quantity;
+        let cartData = structuredClone(cartItems);
 
-        setCartItems(cartData);
+        if (quantity > 0) {
+        cartData[itemId][size] = quantity;
+        } 
+        else {
+            delete cartData[itemId][size];
+        }
+
+        // ✅ CLEANUP: remove leftover 0s
+        for (const items in cartData) {
+        for (const s in cartData[items]) {
+            if (cartData[items][s] === 0) {
+                delete cartData[items][s];
+            }
+        }
+        if (Object.keys(cartData[items]).length === 0) {
+            delete cartData[items];
+        }
+        }
+        
+        setCartItems(cartData)
         if(token){
             try {
                 await axios.post(backendUrl+'/api/cart/update',{itemId,size,quantity},{headers:{token}})
