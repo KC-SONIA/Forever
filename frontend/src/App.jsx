@@ -11,8 +11,9 @@ import Contact from './pages/contact'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Orders from './pages/Orders'
-import Placeorder from './pages/placeorder'
+import Placeorder from './pages/Placeorder'
 import Product from './pages/Product'
+import Verify from './pages/Verify'
 const App = () => {
   return (
     <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
@@ -29,6 +30,7 @@ const App = () => {
         <Route path='/placeorder' element={<Placeorder/>}></Route>
         <Route path='/product/:productId' element={<Product/>}></Route>
         <Route path='/cart' element={<Cart/>}></Route>
+        <Route path='/verify' element={<Verify/>}></Route>
       </Routes>
       <Footer/>
     </div>
