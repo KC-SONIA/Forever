@@ -17,15 +17,19 @@ const ShopContextProvider=(props)=>{
     const navigate=useNavigate();
 
 
-   const addToCart = async (itemId, size) => {
+   const addToCart = async (itemId, size,token) => {
     if (!size) {
         toast.error('Select the Product Size');
         return;
     }
-
+    if(!token){
+        toast.error('Please sign in to continue!')
+        navigate('/login')
+        return;
+    }
     let cartData = structuredClone(cartItems || {});  
     toast.success('Added to cart');
-
+    navigate('/cart')
     if (!cartData[itemId]) {
         cartData[itemId] = {};
     }
